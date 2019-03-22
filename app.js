@@ -11,5 +11,5 @@ console.log(global.message);
 //Os,fs,events,http.
 
 //Loading of a module
-var logger= require('./modules');
-console.log(logger.log('message'));
+const logger= require('./modules');
+console.log(logger('message'));
