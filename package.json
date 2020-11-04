@@ -1,0 +1,23 @@
+{
+  "name": "Learning-Node.js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slytherin20/Learning-Node.js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/slytherin20/Learning-Node.js/issues"
+  },
+  "homepage": "https://github.com/slytherin20/Learning-Node.js#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
