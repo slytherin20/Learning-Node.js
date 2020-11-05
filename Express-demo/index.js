@@ -1,3 +1,4 @@
+const Joi = require('joi');
 const express = require('express');
 const app = express();
 const port = process.env.PORT||3000;
@@ -13,7 +14,7 @@ app.get('/',(req,res)=>{   //This is how we define a route(endpoint)
 });
 
 app.get('/api/courses',(req,res)=>{
-    res.send([1,2,3,4,5]);
+    res.send(courses);
 });
 
 //Route Params
@@ -21,6 +22,7 @@ app.get('/api/courses/:id',(req,res)=>{
    let course = courses.find(c=> c.id==req.params.id);
    if(!course){   //One of the REST constraints
        res.status(404).send("The course with given id is not found");
+       return;
    }
    else{
        res.send(course);
@@ -36,6 +38,18 @@ app.get('/api/posts/:year/:month',(req,res)=>{
 
 //Creating a post request
 app.post('/api/courses',(req,res)=>{
+
+
+    const { error } = validateCourse(req.body);  //Object destructuring
+    if(error){
+        res.status(400).send(error.details[0].message);
+        return;
+    }
+    console.log(res);
+   // if(!req.body.name || req.body.name.length<3){
+     //   res.status(400).send("Name does not exist or length is too small");
+       // return;
+    //}
 const course = {
     id: courses.length + 1,
     name: req.body.name
@@ -43,6 +57,58 @@ const course = {
 courses.push(course);
 res.send(course);
 });
+
+//Updating a course using its ID
+app.put('/api/courses/:id',(req,res)=>{
+   //Look up the course if present.
+    let course = courses.find(c=>c.id==req.params.id);
+    //If not found.
+    if(!course){
+        res.status(404).send("Course to be updated not found!!");
+        return;
+    }
+    //Validate the strings.
+   let result = validateCourse(req.body);
+    if(result.error){
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+    console.log(result);
+    //Update course
+    course.name = req.body.name;
+
+    //Return updated course to client.
+    res.send(course);
+
+});
+
+//Deleting a course
+app.delete('/api/courses/:id',(req,res)=>{
+    //Look up the course to delete
+    const course = courses.find(c=>c.id==req.params.id);
+    //If not found
+    if(!course){
+        res.status(404).send("Course you are looking for is not found!!");
+        return;
+    }
+    //If found delete the specified course
+    const index = courses.indexOf(course);
+    courses.splice(index,1);
+
+    //Return the course
+    res.send(course);
+
+
+});
+
+function validateCourse(course){
+    const schema= {
+        name: Joi.string().min(3).required()
+    }
+    const result = Joi.validate(course,schema);
+    return result;
+}
+
 app.listen(port,()=>{
     console.log(`Listening on port ${port}....`);
 })
