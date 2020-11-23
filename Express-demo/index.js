@@ -1,5 +1,8 @@
 const Joi = require('joi');
 const express = require('express');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const logger = require('./logger');
 const app = express();
 const port = process.env.PORT||3000;
 const courses = [
@@ -8,6 +11,23 @@ const courses = [
     {id:3,name:"Git"}
 ];
 app.use(express.json());  //To parse Json object on using express.
+
+app.use(express.urlencoded({extended:true})); //To parse url encoded payload (it is also a built-in middleware)
+
+app.use(express.static('public'));  //Middleware to store static files
+
+app.use(helmet()); //Helmet is used to make app more secure by setting various HTTP headers.
+
+app.use(morgan('tiny')); //For HTTP request logging
+
+//Custom middleware
+app.use(logger);
+
+//Another customer middleware
+app.use(function(req,res,next){
+   console.log("Authenticating.....");
+   next();
+});
 
 app.get('/',(req,res)=>{   //This is how we define a route(endpoint)
     res.send("Hello World!!!");
